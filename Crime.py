@@ -6,6 +6,8 @@ def probability(DC, DEX, CHAINTWIS, xp1, xp2, xp3, PB, lucky, reliable):
     # depending on which Ability Check is made => CHAINTWIS is determined
     # PB = proficiency bonus
 
+    #FOR MORE INFO see XGtE p.131
+
     #reliable 11th Lvl Rogue Feature
     #Lucky Lineage Feat (Halfling)
 
