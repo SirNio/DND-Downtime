@@ -1,0 +1,143 @@
+from random import randint
+
+
+def probability(Athletics_DC, Acrobatics_DC, CON_DC, Athletics, Acrobatics, Attack_Roll_Modifier, lucky):
+    # DC = 2d10+5 = 16
+    # 3 AC fail: -2money
+    # 2 AC fail: -0.5money
+    # 1 AC Fail: 1.5money
+    # 0 AC Fail: 2money
+
+    # FOR MORE INFORMATION look up XGtE p.130
+
+    nat1 = 1 / 20
+    if lucky:
+        nat1 = 1 / (20 * 20)
+
+    real_Athletics_DC = Athletics_DC - 1 - Athletics
+    real_Acrobatics_DC = Acrobatics_DC - 1 - Acrobatics
+    real_CON_DC = CON_DC - 1 - Attack_Roll_Modifier
+
+    failing_Athletics_AC  = real_Athletics_DC/20
+    failing_Acrobatics_AC = real_Acrobatics_DC/20
+    failing_CON_AC = real_CON_DC/20
+
+    if real_Athletics_DC < 1:
+        if real_Acrobatics_DC < 1:
+            if real_CON_DC < 1:
+                return [200, (1 - nat1) * (1 - nat1) * (1 - nat1),
+                        100, 3 * (1 - nat1) * (1 - nat1) * nat1,
+                        50, 3 * nat1 * nat1 * (1 - nat1),
+                        0, nat1 * nat1 * nat1]
+            else:
+                return [200, (1 - nat1) * (1 - nat1) * (1 - failing_CON_AC),
+                        100, 2 * nat1 * (1 - nat1) * (1 - failing_CON_AC) + failing_CON_AC * nat1 * nat1,
+                        50, nat1 * nat1 * (1 - failing_CON_AC) + 2 * (1 - nat1) * nat1 * failing_CON_AC,
+                        0, nat1 * nat1 * failing_CON_AC]
+        else:
+            if real_CON_DC < 1:
+                return [200, (1 - nat1) * (1 - nat1) * (1 - failing_Acrobatics_AC),
+                        100, 2 * nat1 * (1 - nat1) * (1 - failing_Acrobatics_AC) + failing_Acrobatics_AC * nat1 * nat1,
+                        50, nat1 * nat1 * (1 - failing_Acrobatics_AC) + 2 * (1 - nat1) * nat1 * failing_Acrobatics_AC,
+                        0, nat1 * nat1 * failing_Acrobatics_AC]
+            else:
+                return [200, (1 - nat1) * (1 - failing_Acrobatics_AC) * (1 - failing_CON_AC),
+                        100, nat1 * (1 - failing_Acrobatics_AC) * (1 - failing_CON_AC) + (1 - nat1) * failing_Acrobatics_AC * (
+                                    1 - failing_CON_AC + (1 - nat1) * (1 - failing_Acrobatics_AC) * failing_CON_AC),
+                        50, (1 - nat1) * failing_Acrobatics_AC * failing_CON_AC + nat1 * (
+                                    1 - failing_Acrobatics_AC) * failing_CON_AC + nat1 * failing_Acrobatics_AC * (1 - failing_CON_AC),
+                        0, nat1 * failing_Acrobatics_AC * failing_CON_AC]
+    else:
+        if real_Acrobatics_DC < 1:
+            if real_CON_DC < 1:
+                return [200, (1 - failing_Athletics_AC) * (1 - nat1) * (1 - nat1),
+                        100, failing_Athletics_AC * (1 - nat1) * (1 - nat1) + (1 - failing_Athletics_AC) * nat1 * (1 - nat1),
+                        50, (1 - failing_Athletics_AC) * nat1 * nat1 + 2 * failing_Athletics_AC * (1 - nat1) * nat1,
+                        0, failing_Athletics_AC * nat1 * nat1]
+            else:
+                return [200, (1 - failing_Athletics_AC) * (1 - nat1) * (1 - failing_CON_AC),
+                        100, (1 - failing_Athletics_AC) * (1 - nat1) * failing_CON_AC + (1 - failing_Athletics_AC) * nat1 * (
+                                    1 - failing_CON_AC) + failing_Athletics_AC * (1 - nat1) * (1 - failing_CON_AC),
+                        50, (1 - failing_Athletics_AC) * nat1 * failing_CON_AC + failing_Athletics_AC * (
+                                    1 - nat1) * failing_CON_AC + failing_Athletics_AC * nat1 * (1 - failing_CON_AC),
+                        0, failing_Athletics_AC * nat1 * failing_CON_AC]
+        else:
+            if real_CON_DC < 1:
+                return [200, (1 - failing_Athletics_AC) * (1 - failing_Acrobatics_AC) * (1 - nat1),
+                        100,
+                        failing_Athletics_AC * (1 - failing_Acrobatics_AC) * (1 - nat1) + (1 - failing_Athletics_AC) * failing_Acrobatics_AC * (
+                                    1 - nat1) + (1 - failing_Athletics_AC) * (1 - failing_Acrobatics_AC) * nat1,
+                        50,
+                        failing_Athletics_AC * failing_Acrobatics_AC * (1 - nat1) + failing_Athletics_AC * (1 - failing_Acrobatics_AC) * nat1 + (
+                                    1 - failing_Athletics_AC) * failing_Acrobatics_AC * nat1,
+                        0, failing_Athletics_AC * failing_Acrobatics_AC * nat1]
+            else:
+                return [200, (1 - failing_Athletics_AC) * (1 - failing_Acrobatics_AC) * (1 - failing_CON_AC),
+                        100, failing_Athletics_AC * (1 - failing_Acrobatics_AC) * (1 - failing_CON_AC) + (
+                                    1 - failing_Athletics_AC) * failing_Acrobatics_AC * (1 - failing_CON_AC) + (
+                                    1 - failing_Athletics_AC) * (1 - failing_Acrobatics_AC) * failing_CON_AC,
+                        50, failing_Athletics_AC * failing_Acrobatics_AC * (1 - failing_CON_AC) + failing_Athletics_AC * (
+                                    1 - failing_Acrobatics_AC) * failing_CON_AC + (
+                                    1 - failing_Athletics_AC) * failing_Acrobatics_AC * failing_CON_AC,
+                        0, failing_Athletics_AC * failing_Acrobatics_AC * failing_CON_AC]
+
+
+
+def calculate_profit(Athletics_DC, Acrobatics_DC, CON_DC, Athletics, Acrobatics, Attack_Roll, lucky):
+    data = probability(Athletics_DC, Acrobatics_DC, CON_DC, Athletics, Acrobatics, Attack_Roll, lucky)
+
+    Full_fail_money = data[0] * data[1]
+    Half_fail_money = data[2] * data[3]
+    Half_success_money = data[4] * data[5]
+    Full_success_money = data[6] * data[7]
+
+
+
+    profit = round(Full_fail_money+Half_fail_money+Half_success_money+ Full_success_money,10)
+    #print("-------------------------------------------------------------")
+    #print("DC",DC,"Gambling")
+    #print("-------------------------------------------------------------")
+    #print("You gain", round(profit,1), "gp in this week")
+    #print("\nDetailed Report:")
+    #print("     0/3AC:   ", round(Full_fail_money,1), "gp =",data[0],"gp *",round(100*data[1],2),"%")
+    #print("     1/3AC:   ", round(Half_fail_money,1), "gp = ",data[2],"gp *",round(100*data[3],2),"%")
+    #print("     2/3AC:   ", round(Half_success_money,1), "gp = ",data[4],"gp *",round(100*data[5],2),"%")
+    #print("     3/3AC:   ", round(Full_success_money,1), "gp = ",data[6],"gp *",round(100*data[7],2),"%")
+    return profit
+
+
+
+def random_roll(Athletics, Acrobatics, Attack_Roll_Modifier, lucky):
+    Athletics_DC = randint(7, 25)
+    Acrobatics_DC = randint(7, 25)
+    CON_DC = randint(7, 25)
+
+    first_roll = randint(1, 20) + Athletics
+    second_roll = randint(1, 20) + Acrobatics
+    third_roll = randint(1, 20) + Attack_Roll_Modifier
+
+    if Athletics_DC <= first_roll and Acrobatics_DC <=second_roll and CON_DC <=third_roll:
+        return 200
+    elif Athletics_DC > first_roll and Acrobatics_DC <=second_roll and CON_DC <=third_roll or Athletics_DC <= first_roll and Acrobatics_DC > second_roll and CON_DC <= third_roll or Athletics_DC <= first_roll and Acrobatics_DC <= second_roll and CON_DC > third_roll:
+        return 100
+    elif Athletics_DC > first_roll and Acrobatics_DC > second_roll and CON_DC <= third_roll or Athletics_DC > first_roll and Acrobatics_DC > second_roll and CON_DC <= third_roll or Athletics_DC > first_roll and Acrobatics_DC <= second_roll and CON_DC > third_roll:
+        return 50
+    else:
+        return 0
+
+
+def mean_profit( Athletics, Acrobatics, Attack_Roll_Modifier):
+    #DC can be 2d10+5
+    sum = 0
+    for DC1 in range(7,26):
+        for DC2 in range(7,26):
+            for DC3 in range(7,26):
+                value = calculate_profit(DC1, DC2, DC3,  Athletics, Acrobatics, Attack_Roll_Modifier,False)
+                sum += value
+                #print("DC",DC1,DC2,DC3,": ",round(value,2))
+    return round(sum/(18**3),0)
+
+
+print("Over time you will gain", mean_profit(6,6,6,),"gp per pit fight with your ability scores")
+print("This time you earned:",random_roll(6,6,6,False),"gp")
+#You cannot lot loose money, but the higher your ability scores the higher the merit!!!
