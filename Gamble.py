@@ -107,11 +107,32 @@ def calculate_profit(Insight_DC, Deception_DC, Intimidation_DC, Insight, Decepti
 
 
 
-def random_roll(Insight,Deception,Intimidation, lucky, money):
+def random_roll(Insight,Deception,Intimidation, money):
     Insight_DC = randint(7, 25)
     Deception_DC = randint(7, 25)
     Intimidation_DC = randint(7, 25)
-    return calculate_profit(Insight_DC,Deception_DC,Intimidation_DC,Insight,Deception,Intimidation, lucky, money)
+
+    first_roll = randint(1, 20) + Insight
+    second_roll = randint(1, 20) + Deception
+    third_roll = randint(1, 20) + Intimidation
+
+    #print("DC for Insight",Insight_DC,": ",first_roll,"rolled")
+    #print("DC for Deception", Deception_DC, ": ", second_roll, "rolled")
+    #print("DC for Intimidation", Intimidation_DC, ": ", third_roll, "rolled")
+
+    if Insight_DC <= first_roll and Deception_DC <=second_roll and Intimidation_DC <=third_roll:
+        #print("Thus you got 3/3AC")
+        return 2*money
+    elif Insight_DC > first_roll and Deception_DC <=second_roll and Intimidation_DC <=third_roll or Insight_DC <= first_roll and Deception_DC > second_roll and Intimidation_DC <= third_roll or Insight_DC <= first_roll and Deception_DC <= second_roll and Intimidation_DC > third_roll:
+        #print("Thus you got 2/3AC")
+        return 1.5*money
+    elif Insight_DC > first_roll and Deception_DC > second_roll and Intimidation_DC <= third_roll or Insight_DC > first_roll and Deception_DC > second_roll and Intimidation_DC <= third_roll or Insight_DC > first_roll and Deception_DC <= second_roll and Intimidation_DC > third_roll:
+        #print("Thus you got 1/3AC")
+        return -0.5*money
+    else:
+        #print("Thus you got 0/3AC")
+        return -2*money
+
 
 def mean_profit(Insight,Deception,Intimidation):
     #DC can be 2d10+5
@@ -126,6 +147,6 @@ def mean_profit(Insight,Deception,Intimidation):
 
 
 print("Over time you will gain", mean_profit(6,6,6),"gp per 1000gp bet with your ability scores")
-print("This time you gambled:",random_roll(6,6,6,False,1000),"gp")
+print("This time you gambled:",random_roll(6,6,6,1000),"gp")
 #If the modifiers summed up are 12 or larger, the character will earn money overtime!!!
 #the amount of money will increase linear with your modifiers.
